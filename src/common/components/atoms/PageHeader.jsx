@@ -4,7 +4,7 @@ const PageHeader = ({ title }) => {
   const titleStyle = {
     fontSize: '24px',
     fontWeight: 'bold',
-    margin: '20px',
+    margin: '25px 20px',
   };
   const bannerStyle = {
     backgroundColor: '#fff',
