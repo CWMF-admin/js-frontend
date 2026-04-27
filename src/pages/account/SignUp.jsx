@@ -73,9 +73,9 @@ export default function SignUp() {
           body: JSON.stringify({
             email: formState.email,
             password: formState.password,
-            username: formState.username || undefined,
-            firstname: formState.firstname || undefined,
-            lastname: formState.lastname || undefined,
+            username: formState.username ,
+            firstname: formState.firstname ,
+            lastname: formState.lastname ,
           }),
         }
       );
@@ -109,12 +109,14 @@ export default function SignUp() {
           placeholder='John'
           value={formState.firstname}
           onChange={handleChangeFirstname}
+          required
         />
         <Input.Text
           title='Last name'
           placeholder='Smith'
           value={formState.lastname}
           onChange={handleChangeLastname}
+          required
         />
         <Input.Text
           title='Email'
@@ -128,6 +130,7 @@ export default function SignUp() {
           placeholder='johnsmith'
           value={formState.username}
           onChange={handleChangeUsername}
+          required
         />
         <Input.Password
           title='Password'
