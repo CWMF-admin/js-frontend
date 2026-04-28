@@ -25,4 +25,5 @@ export const StyledButton = styled(Button.Primary)`
   padding-right: 30px;
   margin-left: auto;
   margin-right: auto;
+  color: --cworange;
 `;
