@@ -55,5 +55,5 @@ export const StyledButton = styled(Button.Primary)`
 export const BodyContainer = styled.div`
   background-color: #f8f8f8;
   width: 100%;
-  height: 100%;
+  height: 100vh;
 `;
