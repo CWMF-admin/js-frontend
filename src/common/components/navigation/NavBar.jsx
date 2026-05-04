@@ -201,7 +201,7 @@ useEffect(() => {
             ) : <img src={CWMF_small_logo} alt='CWMF Logo' style={styleSmallLogo}></img>}
           </LogoPlaceholder>
           <StyleButtonHam toggle={toggle} onClick={windowWidth ? handleNavToggle : handleDropdown}>
-            {windowWidth ? <ArrowStyle>&gt;</ArrowStyle> : <img src={Hamburger} alt='Hamburger Menu' style={styleHamburger} />}
+            {windowWidth ?  ( toggle ? <ArrowStyle>&lt;</ArrowStyle> : <ArrowStyle> &gt;</ArrowStyle> ) : <img src={Hamburger} alt='Hamburger Menu' style={styleHamburger} />}
             
             
       </StyleButtonHam>
