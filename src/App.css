@@ -1,6 +1,8 @@
 /* global color presets */
 :root {
   --primary-green: #45bf84;
+  --primary-blue: #314552;
+  --primary-orange: #d38269;
   --secondary-lightgrey: #f3f3f3;
   --darkgrey: #747474;
   --white: #fff;
