@@ -4,8 +4,6 @@ import { BodyContainer } from '@/common/components/form/styles';
 import 'temporal-polyfill/global'
 import '@schedule-x/theme-default/dist/index.css'
 
-import VolStats from "@/common/components/dashboard/VolStats";
-
 const VolunteerDash = () => {
     const styleBody = {
         display: 'flex',

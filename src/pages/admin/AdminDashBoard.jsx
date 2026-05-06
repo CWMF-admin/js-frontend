@@ -5,7 +5,7 @@ import { BodyContainer } from '@/common/components/form/styles';
 import RecentVolunteer from '@/common/components/dashboard/RecentVolunteer';
 import Stats from '../../common/components/dashboard/Stats';
 import UpcomingEvents from '@/common/components/dashboard/UpcomingEvents';
-import WeekCal from '@/common/components/dashboard/WeekCal';
+
 const AdminDashBoard = () => {
   const styleBody = {
     display: 'flex',
@@ -61,7 +61,6 @@ const AdminDashBoard = () => {
           <Stats title="TOTAL HOURS" number="6" bottomText="Served" category="Hours"/>
           <Stats title="TOTAL SIGNUPS" number="7" bottomText="2 attended" category="Signups"/>
         </div>
-        <div><WeekCal></WeekCal></div>
         <div style={eventsVolunteerContainerStyle}>
         <div style={eventsContainerStyle}>
           <h3 style={styleEventsTitle}>Upcoming Events</h3>
