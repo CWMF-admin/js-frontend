@@ -28,6 +28,7 @@ export default function App() {
           <Route path='/' element={<NavLayout />}>
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
+              <Route path='admin-dashboard' element={<AdminDashBoard />} />
             </Route>
           </Route>
           <Route path='/' element={<NavLayout_login />}>
