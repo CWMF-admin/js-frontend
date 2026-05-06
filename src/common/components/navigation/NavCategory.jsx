@@ -7,6 +7,7 @@ import AcknowledgementsIcon from '../../../assets/images/acknowledgements.png';
 import EventsIcon from '../../../assets/images/events.png';
 import RegistrationsIcon from '../../../assets/images/registrations.png';
 import VolunteersIcon from '../../../assets/images/volunteers.png';
+import styled from 'styled-components';
 
 const icons = {
   Dashboard: DashboardIcon,
@@ -22,9 +23,13 @@ const NavCategory = ({ name, icon, toggle, onClick }) => {
     height: '20px',
     marginRight: '8px',
   };
+  const NavCategoryStyle = styled(Button.Nav)`
+    display: flex;
+    flex-direction: row;
+  `;
 
   return (
-    <Button.Nav onClick={onClick}>
+    <NavCategoryStyle onClick={onClick}>
       {toggle ? (
         <>
           <img src={icons[icon]} alt={name} style={iconStyle} />
@@ -33,7 +38,7 @@ const NavCategory = ({ name, icon, toggle, onClick }) => {
       ) : (
         <img src={icons[icon]} alt={name} style={iconStyle} />
       )}
-    </Button.Nav>
+    </NavCategoryStyle>
   );
 };
 

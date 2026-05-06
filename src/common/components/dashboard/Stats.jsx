@@ -4,7 +4,7 @@ import GreenVolunteers from '../../../assets/images/GreenVolunteers.png';
 import OrangeCalendar from '../../../assets/images/OrangeCalendar.png';
 import BlueClock from '../../../assets/images/BlueClock.png';
 import PurpleCheck from '../../../assets/images/PurpleCheck.png';
-
+import styled from 'styled-components';
 const Images = {
   Volunteers: GreenVolunteers,
   Events: OrangeCalendar,
@@ -18,19 +18,24 @@ const colors = {
   Signups: "#F0DFFF",
 }
 const Stats = ({title, number, bottomText, category}) => {
-  const statsDivStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    width: '15%',
-    height: 'auto',
-    aspectRatio: '4/3',
-    backgroundColor: '#fff',
-    borderRadius: '15px',
-    boxShadow: '0px 2px 2px lightgray',
-    padding: '20px',
-    margin: '20px',
-  };
+  const StatsDivStyle = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 15%;
+    height: auto;
+    aspect-ratio: 4/3;
+    background-color:#fff;
+    border-radius: 15px;
+    box-shadow: 0px 2px 2px lightgray;
+    padding: 20px;
+    margin: 20px;
+    @media (max-width: 768px) {
+      flex-direction: row;
+      width: 80%;
+      aspect-ratio: 10/1;
+    }
+  `;
   const statsTopStyle = {
     display: 'flex',
     flexDirection: 'row',
@@ -71,7 +76,7 @@ const Stats = ({title, number, bottomText, category}) => {
   };
 
   return (
-    <div style={statsDivStyle}>
+    <StatsDivStyle>
       <div style={statsTopStyle}>
         <div style={statsTitleStyle}>{title}</div>
         <div style={statBGStyle}>
@@ -86,7 +91,7 @@ const Stats = ({title, number, bottomText, category}) => {
       <div style={statsNumberStyle}>{number}</div>
       <div style={statsBottomTextStyle}>{bottomText}</div>
       </div>
-    </div>
+    </StatsDivStyle>
   );
 };
 

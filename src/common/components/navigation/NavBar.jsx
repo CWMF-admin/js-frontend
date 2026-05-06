@@ -11,15 +11,28 @@ import Hamburger from '../../../assets/images/Hamburger.png';
 import profileIcon from '../../../assets/images/profile.png';
 import LogoutModal from './LogoutModal';
 import NavCategory from './NavCategory';
-
+import Drag from '../../../assets/images/Drag.png';
+import CWMF_small_logo from '../../../assets/images/CWMF_small_logo.png'
 const StyledNav = styled.nav`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  padding: 10px 10px;
+  padding: 10px 1%;
   font-size: 20px;
   background-color: #314552;
+  position: fixed;
+  left: 0;
+  top: 0;
+ width: ${({ toggle }) => (toggle ? '20%' : '5%')};
+  transition: width 0.25s ease;
+  height: 100vh;
+  @media (max-width: 768px) {
+    width: 100%;
+    flex-direction: row;
+    max-width: 100vw;
+    position: sticky;
+  }
 `;
 
 const TopAligned = styled.div`
@@ -49,13 +62,32 @@ const LogoPlaceholder = styled(Button.Invisible)`
   gap: 0px;
   justify-content: center;
   align-items: center;
+  @media (max-width: 768px) {
+    width: 100%;
+}
 `;
 
-export default function NavBar() {
+export default function NavBar({ toggle, setToggle }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const { user, logout } = useUser();
-  const [toggle, setToggle] = useState(true);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth > 768);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const handleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+  
+useEffect(() => {
+  const handleResize = () =>  {
+    const isDesktop = window.innerWidth > 768;
+    setWindowWidth(isDesktop);
+    if (!isDesktop) {
+      setToggle(true);
+    }
+  };
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
 
   const handleLogoutClick = () => {
     setIsModalOpen(true);
@@ -75,65 +107,112 @@ export default function NavBar() {
     }
   };
   const handleNavToggle = () => {
-    setToggle(!toggle);
+    setToggle(prev => !prev);
     console.log(toggle);
   };
   useEffect(() => {
     console.log(toggle);
   }, [toggle]);
 
-  const styleLogo = {
-    width: '75%',
+  const StyleLogo = styled.img`
+    width: ${({ toggle }) => toggle ? '90%' : '75%'};
+    height: auto;
+    transition: width 0.25s ease;
+    @media (max-width: 768px) {
+      width: 50%;
+    }
+  `;
+  const styleSmallLogo = {
+    width: '60%',
     height: 'auto',
-  };
+    marginLeft: '12px',
+  }
   const styleHamburger = {
-    width: '100%',
+    width: '20%',
     height: 'auto',
     background: 'none',
     border: 'none',
     cursor: 'pointer',
     padding: 'none',
   };
-  const styleButtonHam = {
-    display: 'flex',
-    width: '100%',
-    height: 'auto',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    padding: '0',
-  };
-  const logoHamStyle = {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    height: 'auto',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    margin: '0',
-  };
+  const StyleButtonHam = styled.button`
+    align-content: center;
+    justify-content: center;
+    width: ${({toggle}) => toggle ? '100%' : '0%'};
+    height: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: white;
+    margin: 0;
+    position: relative;
+    @media (max-width: 768px) {
+      width: 60%;
+  `;
+  const LogoHamStyle = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: ${(toggle) ? 'space-between' : 'space-around'};
+    align-items: center;
+    width: 100%;
+    height: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin: 0;
+    margin-left: ${({toggle}) => toggle ? null : '0px'};
+    @media (max-width: 768px) {
+      justify-content: space-between;
+    }
+  `;
+  const ArrowStyle = styled.div`
+    position: absolute;
+    color: white;
+    top: -12px;
+    right: ${({ toggle }) => toggle ? '-16px' : '-19px'};
+    zIndex: 200;
+    background-color: #314552;
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+  `;
+  const LogoutStyle = styled(Button.Secondary)`
+  margin-bottom: 20px;
+    @media (max-width: 768px) {
+  display: none;
+}`;
+  const LogIconStyle = styled.img`
+  margin-bottom: 20px;
+    @media (max-width: 768px) {
+      display: none;
+    }
+  `;
+
+  
 
   return (
-    <StyledNav style={{ width: toggle ? '17%' : '5%' }}>
+    <StyledNav toggle={toggle}>
       <TopAligned>
-        <div style={logoHamStyle}>
-          <button onClick={handleNavToggle} style={styleButtonHam}>
-            <img src={Hamburger} alt='Hamburger Menu' style={styleHamburger} />
-          </button>
+        <LogoHamStyle toggle={toggle}>
           <LogoPlaceholder onClick={() => navigate('/')}>
-            {toggle ? (
-              <img src={CWMF_big_logo} alt='CWMF Logo' style={styleLogo} />
-            ) : null}
+            {(toggle || !windowWidth) ? (
+              <StyleLogo toggle={toggle} src={CWMF_big_logo} alt='CWMF Logo'/>
+            ) : <img src={CWMF_small_logo} alt='CWMF Logo' style={styleSmallLogo}></img>}
           </LogoPlaceholder>
-        </div>
-        <NavCategory name='Dashboard' icon='Dashboard' toggle={toggle} onClick={() => navigate('/admin-dashboard')} />
-        <NavCategory name='Events' icon='Events' toggle={toggle} onClick={() => navigate('/admin-events')} />
-        <NavCategory name='Volunteers' icon='Volunteers' toggle={toggle} onClick={() => navigate('/admin-volunteers')} />
-        <NavCategory
-          name='Registrations'
-          icon='Registrations'
+          <StyleButtonHam toggle={toggle} onClick={windowWidth ? handleNavToggle : handleDropdown}>
+            {windowWidth ?  ( toggle ? <ArrowStyle>&lt;</ArrowStyle> : <ArrowStyle> &gt;</ArrowStyle> ) : <img src={Hamburger} alt='Hamburger Menu' style={styleHamburger} />}
+            
+            
+      </StyleButtonHam>
+        </LogoHamStyle>
+        {(windowWidth || dropdownOpen) && ( <>
+          <NavCategory name='Dashboard' icon='Dashboard' toggle={toggle} onClick={() => navigate('/admin-dashboard')} />
+          <NavCategory name='Events' icon='Events' toggle={toggle} onClick={() => navigate('/admin-events')} />
+          <NavCategory name='Volunteers' icon='Volunteers' toggle={toggle} onClick={() => navigate('/admin-volunteers')} />
+          <NavCategory
+            name='Registrations'
+            icon='Registrations'
           toggle={toggle}
           onClick={() => navigate('/admin-registrations')}
         />
@@ -143,29 +222,31 @@ export default function NavBar() {
           toggle={toggle}
           onClick={() => navigate('/admin-acknowledgements')}
         />
+        </>)}
       </TopAligned>
+      
       {!toggle ? (
-        <img
+        <LogIconStyle
           src={profileIcon}
           alt='Profile Icon'
           style={{ width: '30px', height: '30px' }}
         />
       ) : user ? (
-        <Button.Secondary onClick={handleLogoutClick}>Log Out</Button.Secondary>
+        <LogoutStyle onClick={handleLogoutClick}>Log Out</LogoutStyle>
       ) : (
         <>
-          <Button.Primary
+          <LogoutStyle
             onClick={() => navigate('/signup')}
             style={{ width: '100%' }}
           >
             Sign Up
-          </Button.Primary>
-          <Button.Secondary
+          </LogoutStyle>
+          <LogoutStyle
             onClick={() => navigate('/login')}
             style={{ width: '100%' }}
           >
             Login
-          </Button.Secondary>
+          </LogoutStyle>
         </>
       )}
 
@@ -174,6 +255,6 @@ export default function NavBar() {
         onClose={handleModalClose}
         onLogout={handleLogoutConfirm}
       />
-    </StyledNav>
-  );
+    </StyledNav> 
+  )
 }
