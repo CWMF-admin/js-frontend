@@ -31,6 +31,12 @@ const TopAligned = styled.div`
   width: 100%;
 `;
 
+const CenterAligned = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+`;
+
 const LogoPlaceholder = styled(Button.Invisible)`
   display: flex;
   justify-content: space-between;
