@@ -6,6 +6,7 @@ import RecentVolunteer from '@/common/components/dashboard/RecentVolunteer';
 import Stats from '../../common/components/dashboard/Stats';
 import UpcomingEvents from '@/common/components/dashboard/UpcomingEvents';
 import styled from 'styled-components';
+import WeekCal from '@/common/components/dashboard/WeekCal';
 const AdminDashBoard = () => {
  /* const [widthSmall, setWidthSmall] = useState(window.innerWidth < 768);
   useEffect(() => {
@@ -88,6 +89,7 @@ const AdminDashBoard = () => {
           <Stats title="TOTAL HOURS" number="6" bottomText="Served" category="Hours"/>
           <Stats title="TOTAL SIGNUPS" number="7" bottomText="2 attended" category="Signups"/>
         </StatsContainerStyle>
+        <div><WeekCal></WeekCal></div>
         <EventsVolunteerContainerStyle>
         <EventsContainerStyle>
           <StyleEventsTitle>Upcoming Events</StyleEventsTitle>
