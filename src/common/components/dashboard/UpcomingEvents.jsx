@@ -3,7 +3,7 @@ import GrayCalendar from '../../../assets/images/GrayCalendar.png';
 import GrayClock from '../../../assets/images/GrayClock.png';
 import GrayLocation from '../../../assets/images/GrayLocation.png';
 import GrayPeople from '../../../assets/images/GrayPeople.png';
-const UpcomingEvents = ({EventTitle, tag, currVol, volCap, date, time, location}) => {
+const UpcomingEvents = ({key, EventTitle, tag, currVol, volCap, date, time, location}) => {
   const tagColors = {
     'Holiday Event': ['#C40000', '#FFCDCD'],
     'Grocery Giveaway': ['#0A7A00', '#DEFFDA'],
@@ -46,7 +46,7 @@ const UpcomingEvents = ({EventTitle, tag, currVol, volCap, date, time, location}
       alignItems: 'center',
   }
   const tagStyle = {
-        color: tagColors[tag][0],
+    color: tagColors[tag][0],
     backgroundColor: tagColors[tag][1],
     padding: '5px 10px',
     borderRadius: '8px',
@@ -72,7 +72,7 @@ const UpcomingEvents = ({EventTitle, tag, currVol, volCap, date, time, location}
     gap: '5px',
   }
   return (
-    <div style={upcomingEventDivStyle}>
+    <div style={upcomingEventDivStyle} key={key}>
       <div style={topUpcomingEventStyle}>
         <div style={titleTagStyle}>
           <h5 style={titleStyle}>{EventTitle}</h5>
