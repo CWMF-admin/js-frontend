@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-const RecentVolunteer = ({initials, name, email, tag}) => {
+const RecentVolunteer = ({initials, firstname, lastname, email, tag}) => {
   const tagColors = {
     active: ['#0A7A00', '#DEFFDA'],
     pending: ['#B55F06', '#F8F8E3'],
@@ -79,7 +79,7 @@ const RecentVolunteer = ({initials, name, email, tag}) => {
           {initials}
         </div>
         <div style={verticalStyle}>
-          <p style={verticalTextStyle}>{name}</p>
+          <p style={verticalTextStyle}>{firstname} {lastname}</p>
           <p style={verticalEmailStyle}>{email}</p>
         </div>
         <div style={tagDivStyle}>
