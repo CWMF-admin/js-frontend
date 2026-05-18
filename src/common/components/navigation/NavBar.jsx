@@ -24,6 +24,7 @@ const StyledNav = styled.nav`
   position: fixed;
   left: 0;
   top: 0;
+  z-index: 1000;
  width: ${({ toggle }) => (toggle ? '20%' : '5%')};
   transition: width 0.25s ease;
   height: 100vh;
@@ -181,6 +182,9 @@ useEffect(() => {
   margin-bottom: 20px;
     @media (max-width: 768px) {
   display: none;
+  ::hover {
+    cursor: pointer;
+  }
 }`;
   const LogIconStyle = styled.img`
   margin-bottom: 20px;
@@ -230,6 +234,7 @@ useEffect(() => {
           src={profileIcon}
           alt='Profile Icon'
           style={{ width: '30px', height: '30px' }}
+          onClick={handleLogoutClick}
         />
       ) : user ? (
         <LogoutStyle onClick={handleLogoutClick}>Log Out</LogoutStyle>
