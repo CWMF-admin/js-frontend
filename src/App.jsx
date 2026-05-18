@@ -30,6 +30,9 @@ export default function App() {
               <Route index element={<Home />} />
               <Route path='admin-dashboard' element={<AdminDashBoard />} />
             </Route>
+            <Route element={<PrivateRoute allowedRoles={['volunteer']} />}>
+              <Route path='volunteer-dashboard' element={<VolunteerDash />} />  
+            </Route>
           </Route>
           <Route path='/' element={<NavLayout_login />}>
             <Route path='admin-acknowledgements' element={<Acknowledgements/>}/>
