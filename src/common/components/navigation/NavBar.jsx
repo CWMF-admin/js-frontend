@@ -192,6 +192,11 @@ useEffect(() => {
       display: none;
     }
   `;
+  const LogTopNavStyle = styled(Button.Secondary)`
+  margin-bottom: 20px;
+  ::hover {
+    cursor: pointer;
+  }  `;
 
   
 
@@ -204,7 +209,7 @@ useEffect(() => {
               <StyleLogo toggle={toggle} src={CWMF_big_logo} alt='CWMF Logo'/>
             ) : <img src={CWMF_small_logo} alt='CWMF Logo' style={styleSmallLogo}></img>}
           </LogoPlaceholder>
-          <StyleButtonHam toggle={toggle} onClick={windowWidth ? handleNavToggle : handleDropdown}>
+          <StyleButtonHam toggle={toggle} windowWidth={windowWidth} onClick={windowWidth ? handleNavToggle : handleDropdown}>
             {windowWidth ?  ( toggle ? <ArrowStyle>&lt;</ArrowStyle> : <ArrowStyle> &gt;</ArrowStyle> ) : <img src={Hamburger} alt='Hamburger Menu' style={styleHamburger} />}
             
             
@@ -226,6 +231,9 @@ useEffect(() => {
           toggle={toggle}
           onClick={() => navigate('/admin-acknowledgements')}
         />
+        {!windowWidth ?         <LogTopNavStyle onClick={handleLogoutClick} toggle={toggle}>Log Out</LogTopNavStyle>
+ : null}
+        
         </>)}
       </TopAligned>
       
