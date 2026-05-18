@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+
+import { auth } from '@/firebase-config';
 const Dropdown = () => 
     {
 
@@ -6,7 +9,6 @@ const Dropdown = () =>
             display:'flex',
             flexDirection:'column',
             backgroundColor:'#ffffff',
-            height:'fit-content',
             marginTop:'10px',
             width:'90%',
             height:'20%',
@@ -27,17 +29,60 @@ const Dropdown = () =>
             paddingLeft:'15px',
         }
 
+          const [users, setUsers] = useState([]);
+          const [loading, setLoading] = useState(true);
+          const [error, setError] = useState(null);
+        
+          useEffect(() => {
+            const fetchUsers = async () => {
+              try {
+                const token = await auth.currentUser?.getIdToken();
+                const response = await fetch(
+                  `${import.meta.env.VITE_BACKEND_URL}/auth/users`,
+                  {
+                    credentials: 'include',
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  }
+                );
+        
+                if (!response.ok) {
+                  throw new Error('Failed to fetch users');
+                }
+        
+                const data = await response.json();
+                setUsers(data);
+              } catch (err) {
+                setError(err.message);
+                console.error('Error fetching users:', err);
+              } finally {
+                setLoading(false);
+              }
+            };
+        
+            fetchUsers();
+          }, []);
+        
+          if (loading) {
+            return <div>Loading users...</div>;
+          }
+        
+          if (error) {
+            return <div>Error: {error}</div>;
+          }
+
         return(
             <div style={hStyle}>
-                <label for="cars" style={lblStyle}><strong>Select Volunteer:</strong></label>
-                <select style={dropStyle} name="cars" id="cars">
-                <option value="null">Select Volunteer</option>
-                <option value="madeleineyoung2029@u.northwestern.edu">Maddy Young</option>
-                <option value="hayleymccormack2028@u.northwestern.edu">Hayley McCormack</option>
-                <option value="kaylaxu@u.northwestern.">Kayla Xu</option>
-                <option value="danahansari@u.northwestern.edu">Danah Ansari</option>
-                <option value="aliviawynn@u.northwestern.edu">Alivia Wynn</option>
-                <option value="benisaac@u.northwestern.edu">Ben Isaac</option>
+            
+                <label htmlFor="cars" style={lblStyle}>
+                    <strong>Select Volunteer:</strong>
+                </label>
+                <select style={dropStyle} name="volunteers" id="volunteers">
+                <option value="">Select Volunteer</option>
+                {users.map((user) => (
+                <option key={user.email} value={user.email}>{user.firstname} {user.lastname}</option>
+                ))}
                 </select>
             </div>
         );
