@@ -19,6 +19,7 @@ import './App.css';
 import VolunteerDash from './pages/volunteer/VolunteerDash';
 import AdminDashBoard from './pages/admin/AdminDashBoard';
 import Acknowledgements from './pages/admin/Acknowledgements';
+import AdminEvents from './pages/admin/AdminEvents';
 export default function App() {
   return (
     <>
@@ -29,6 +30,7 @@ export default function App() {
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
               <Route path='admin-dashboard' element={<AdminDashBoard />} />
+              <Route path='admin-events' element={<AdminEvents />} />
             </Route>
           </Route>
           <Route path='/' element={<NavLayout_login />}>
