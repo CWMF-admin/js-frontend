@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import PageHeader from '@/common/components/atoms/PageHeader';
 import { BodyContainer } from '@/common/components/form/styles';
@@ -6,6 +6,7 @@ import RecentVolunteer from '@/common/components/dashboard/RecentVolunteer';
 import Stats from '../../common/components/dashboard/Stats';
 import UpcomingEvents from '@/common/components/dashboard/UpcomingEvents';
 import styled from 'styled-components';
+import { auth } from '@/firebase-config';
 const AdminDashBoard = () => {
  /* const [widthSmall, setWidthSmall] = useState(window.innerWidth < 768);
   useEffect(() => {
@@ -77,6 +78,62 @@ const AdminDashBoard = () => {
       align-items: center;
       gap: 20px;
       `;
+      const [events, setEvents] = useState([]);
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const token = await auth.currentUser?.getIdToken();
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/events`, 
+          {
+            credentials: 'include', 
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        const data = await response.json();
+        console.log('Fetched events:', data);
+        setEvents(data);
+      }
+      catch (err) {
+        console.error('Error fetching events:', err);
+      }
+    };
+    fetchEvents();
+  }, []);
+   const [users, setUsers] = useState([]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = await auth.currentUser?.getIdToken();
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/auth/users`, 
+          {
+            credentials: 'include', 
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        const data = await response.json();
+        console.log('Fetched users:', data);
+        setUsers(data);
+      }
+      catch (err) {
+        console.error('Error fetching users:', err);
+      }
+    };
+    fetchUsers();
+  }, []);
   
   return (
     <StyleBody>
@@ -91,17 +148,38 @@ const AdminDashBoard = () => {
         <EventsVolunteerContainerStyle>
         <EventsContainerStyle>
           <StyleEventsTitle>Upcoming Events</StyleEventsTitle>
-          <UpcomingEvents EventTitle="Spring Holiday Meal Drive" tag="Holiday Event" currVol="2" volCap="25" date="Mar 27, 2026" time="8:00 AM - 2:00 PM" location="CW Foundation Community Center"/>
-          <UpcomingEvents EventTitle="Grocery Giveaway" tag="Grocery Giveaway" currVol="0" volCap="15" date="Feb 27, 2026" time="9:00 AM - 12:00 PM" location="CW Foundation Community Center"/>
+          {events.map((event) => (
+            <UpcomingEvents
+              key={event.id}
+              EventTitle={event.title}
+              tag="Holiday Event"
+              currVol={event.currentVolunteers}
+              volCap={event.capacity}
+              date={new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              time={`${new Date(event.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+              location={event.location}
+            />
+          ))}
+        {/*  <UpcomingEvents EventTitle="Spring Holiday Meal Drive" tag="Holiday Event" currVol="2" volCap="25" date="Mar 27, 2026" time="8:00 AM - 2:00 PM" location="CW Foundation Community Center"/>
+          <UpcomingEvents EventTitle="Grocery Giveaway" tag="Grocery Giveaway" currVol="0" volCap="15" date="Feb 27, 2026" time="9:00 AM - 12:00 PM" location="CW Foundation Community Center"/>*/}
         </EventsContainerStyle>
         <VolunteerContainerStyle>
           <h3>Recent Volunteers</h3>
-          <RecentVolunteer initials="MY" name="Maddy Young" email="madeleineyoung2029@u.northwestern.edu" tag="active"/>
+          {users.slice(0, 6).map((user) => (
+            <RecentVolunteer
+              key={user.email}
+              initials={`${user.firstname[0]}${user.lastname[0]}`}
+              name={`${user.firstname} ${user.lastname}`}
+              email={user.email}
+              tag="active"
+            />
+          ))}
+         {/* <RecentVolunteer initials="MY" name="Maddy Young" email="madeleineyoung2029@u.northwestern.edu" tag="active"/>
           <RecentVolunteer initials="HM" name="HayleyMcCormack" email="hayleymccormack@u.northwestern.edu" tag="pending"/>
           <RecentVolunteer initials="KX" name="Kayla Xu" email="kaylaxu@u.northwestern.edu" tag="inactive"/>
           <RecentVolunteer initials="DA" name="Danah Ansari" email="danahansari@u.northwestern.edu" tag="active"/>
           <RecentVolunteer initials= "AW" name="Alivia Wynn" email="aliviawynn@u.northwestern.edu" tag="pending"/>
-          <RecentVolunteer initials="BI" name="Ben Isaac" email="benisaac@u.northwestern.edu" tag="inactive"/>
+          <RecentVolunteer initials="BI" name="Ben Isaac" email="benisaac@u.northwestern.edu" tag="inactive"/>*/}
         </VolunteerContainerStyle>
         </EventsVolunteerContainerStyle>
       </BodyContainer>
