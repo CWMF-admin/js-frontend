@@ -28,7 +28,6 @@ const Acknowledgements = () => {
             <PageHeader title = "Acknowledgements"/>
             <BodyContainer>
             <div style={container}>
-                <div style={column}><Dropdown/></div>
                 <div style={column}><AcknowForm/></div>
             </div>
             </BodyContainer>

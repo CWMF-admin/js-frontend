@@ -11,7 +11,13 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@schedule-x/calendar": "^4.6.0",
+    "@schedule-x/event-modal": "^4.6.0",
+    "@schedule-x/events-service": "^4.6.0",
+    "@schedule-x/react": "^4.1.0",
+    "@schedule-x/theme-default": "^4.6.0",
     "firebase": "^12.7.0",
+    "nodemailer": "^8.0.9",
     "path": "^0.12.7",
     "prop-types": "^15.8.1",
     "react": "^19.2.0",
@@ -19,6 +25,7 @@
     "react-router": "^7.11.0",
     "react-router-dom": "^7.11.0",
     "styled-components": "^6.1.19",
+    "temporal-polyfill": "^0.3.2",
     "url": "^0.11.4"
   },
   "devDependencies": {
@@ -26,8 +33,6 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "jsdom": "^26.1.0",
-    "vitest": "^3.2.4",
     "@trivago/prettier-plugin-sort-imports": "6.0.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
@@ -38,8 +43,10 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "jsdom": "^26.1.0",
     "prettier": "3.7.4",
     "vite": "^7.2.4",
-    "vite-plugin-svgr": "^4.5.0"
+    "vite-plugin-svgr": "^4.5.0",
+    "vitest": "^3.2.4"
   }
 }
