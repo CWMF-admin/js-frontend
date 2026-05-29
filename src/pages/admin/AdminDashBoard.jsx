@@ -77,6 +77,7 @@ const AdminDashBoard = () => {
       flex-direction: column;
       align-items: center;
       gap: 20px;
+    }
       `;
       const [events, setEvents] = useState([]);
   useEffect(() => {
@@ -134,6 +135,56 @@ const AdminDashBoard = () => {
     };
     fetchUsers();
   }, []);
+  const [eventTimes, setEventTimes] = useState([]);
+  useEffect(() => {
+    const fetchEventTimes = async () => {
+      try {
+        const token = await auth.currentUser?.getIdToken();
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/events/calendar`,
+          {
+            credentials: 'include',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+
+        const data = await response.json();
+        console.log('Fetched Calendar Events', data);
+        setEventTimes(data);
+      } catch (err) {
+        console.error('Error fetching users:', err);
+      }
+    };
+
+    fetchEventTimes();
+  }, []);
+
+  const mergedEvents = events.map((event) => {
+    const calData = eventTimes.find((time) => String(time.id) === String(event.id));
+    return {
+      ...event,
+      ...calData,
+    };
+  });
+  useEffect(() => {
+  console.log("Merged events:", mergedEvents);
+  }, [mergedEvents]);
+  events.forEach((event) => {
+  console.log("EVENT ID:", event.id);
+});
+
+eventTimes.forEach((time) => {
+  console.log("TIME ID:", time.id);
+  console.log("TIME EVENT ID:", time.event_id);
+});
+
+
   
   return (
     <StyleBody>
@@ -148,14 +199,14 @@ const AdminDashBoard = () => {
         <EventsVolunteerContainerStyle>
         <EventsContainerStyle>
           <StyleEventsTitle>Upcoming Events</StyleEventsTitle>
-          {events.map((event) => (
+          {mergedEvents.map((event) => (
             <UpcomingEvents
               key={event.id}
               EventTitle={event.title}
               tag="Holiday Event"
-              currVol={event.currentVolunteers}
+              currVol={event.signupCount}
               volCap={event.capacity}
-              date={new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              date={new Date(event.start_time).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               time={`${new Date(event.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
               location={event.location}
             />

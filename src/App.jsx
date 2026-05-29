@@ -29,10 +29,12 @@ export default function App() {
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
               <Route path='admin-dashboard' element={<AdminDashBoard />} />
+              
             </Route>
           </Route>
           <Route path='/' element={<NavLayout_login />}>
             <Route path='admin-acknowledgements' element={<Acknowledgements/>}/>
+            <Route path='volunteer-dashboard' element={<VolunteerDash/>}/>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
               <Route path='signup' element={<SignUp />} />
