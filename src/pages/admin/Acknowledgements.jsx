@@ -1,7 +1,6 @@
 import PageHeader from '@/common/components/atoms/PageHeader';
 import { BodyContainer } from '@/common/components/form/styles';
 import AcknowForm from '@/common/components/form/AcknowForm';
-import Dropdown from '@/common/components/atoms/Dropdown';
 
 const Acknowledgements = () => {
     const styleBody = {
@@ -12,13 +11,11 @@ const Acknowledgements = () => {
         width: '100%',
     };
     const container = {
-            display: 'grid',
-            gridTemplateColumns: '0.8fr 1fr',
-            gap: '5px',
+            margin: '15px 30px 15px 30px',
         };
 
     const column = {
-            padding: '10px',
+            padding: '5px',
             display: 'flex',
             justifyContent: 'center',
         }

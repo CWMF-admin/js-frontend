@@ -1,6 +1,6 @@
 export const acknowledgementTemplate = (volunteerName) => `
 <p>Hello ${volunteerName},</p>
-<p>Thank you for your valuable contribution and dedication to C&W Market Foundation.</p>
+<p>Thank you for your valuable contribution and dedication to the C&W Market Foundation!</p>
 <p>Your hard work and commitment are greatly appreciated.</p>
 <p>Best regards,
 <br/>C&W Market Foundation</p>
@@ -24,10 +24,14 @@ export const invitationTemplate = (volunteerName, eventName, eventDate, eventLoc
 <br/>C&W Market Foundation</p>
 `;
 
-export const confirmationTemplate = (volunteerName, eventName) => `
-<p>Hello ${volunteerName},</p>
+
+export const confirmationTemplate = (volunteerName, eventName, eventDate, eventLocation) => `
+<p>Thank You for Signing Up!</p>
+<p>Hi ${volunteerName},</p>
 <p>We're excited to have you signed up for <strong>${eventName}</strong>!</p>
+<p><strong>Event Details:</strong></p>
+<p><strong>Date:</strong> ${eventDate}</p>
+<p><strong>Location:</strong> ${eventLocation || 'TBD'}</p>
 <p>See you there!</p>
 <p>Best regards,<br/>C&W Market Foundation</p>
 `;
-

@@ -14,8 +14,7 @@ import Calendar from '../../../assets/images/Calendar.svg';
 import Clock from '../../../assets/images/Clock.svg';
 import { Button } from '../atoms/Button';
 import { auth } from '@/firebase-config';
-import { confirmationTemplate } from '../emails/templates';
- 
+import { confirmationTemplate } from '../emails/templates'; 
 function WeekCal() { 
     const eventsService = useState(() => createEventsServicePlugin())[0]
     const [currentUser, setCurrentUser] = useState(null);
@@ -33,7 +32,7 @@ function WeekCal() {
       width: "20px",
     }
 
-    const eventTitle = 
+    const eventLabel = 
     {
       display: 'grid',
       alignItems: 'flex-start',
@@ -59,7 +58,7 @@ function WeekCal() {
       return unsubscribe;
     }, []);
 
-    const sendSignUpEmail = async (eventTitle) => {
+    const sendSignUpEmail = async (eventTitle, eventDate, eventLocation) => {
       if (!currentUser) {
         alert('Please log in to sign up for events');
         return;
@@ -70,16 +69,18 @@ function WeekCal() {
       try {
         const token = await auth.currentUser?.getIdToken();
         
-        // Use the signup template from templates.js
+        // Use the signup template with event details
         const emailContent = confirmationTemplate(
           currentUser.displayName || currentUser.email,
-          eventTitle
+          eventTitle,
+          eventDate,
+          eventLocation
         );
 
         // Send email
         const formData = new FormData();
         formData.append('to', currentUser.email);
-        formData.append('subject', 'Event Signup Confirmation');
+        formData.append('subject', `Signup Confirmation: ${eventTitle}`);
         formData.append('html', emailContent);
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/email/sendEmail`, {
@@ -94,7 +95,7 @@ function WeekCal() {
         if (response.ok) {
           alert('Successfully signed up! Confirmation email sent.');
         } else {
-          alert('Signed up but email failed to send: ' + (data.error || 'Unknown error'));
+          alert('Signed up but email failed to send: ' + (data.error || 'Failed to send email'));
         }
       } catch (error) {
         console.error('Error sending signup email:', error);
@@ -106,27 +107,42 @@ function WeekCal() {
 
     const customComponents = {
       eventModal: ({ calendarEvent }) => {
-        return (
-          <div style={eventModStyle}>
-            <div style={eventTitle}>
-              <div><img style={imgStyle} src={Calendar} alt="" /></div>
-              <div>{calendarEvent.title}</div>
+        try {
+          // Define formattedDate inside the function
+          const formattedDate = monthVector[calendarEvent.start.month - 1] + " " + 
+                               calendarEvent.start.toString()[8] + calendarEvent.start.toString()[9] + ", " + 
+                               calendarEvent.start.toString()[0] + calendarEvent.start.toString()[1] + 
+                               calendarEvent.start.toString()[2] + calendarEvent.start.toString()[3];
+          
+          return (
+            <div style={eventModStyle}>
+              <div style={eventLabel}>
+                <div><img style={imgStyle} src={Calendar} alt="" /></div>
+                <div>{calendarEvent.title}</div>
+              </div>
+              <div style={eventLabel}>
+                <div><img style={imgStyle} src={Clock} alt="" /></div>
+                <div>{formattedDate}</div>
+              </div>
+              <div style={desStyle}>{calendarEvent.description}</div>
+              <div style={desStyle}>
+                <Button.Primary 
+                  onClick={() => sendSignUpEmail(
+                    calendarEvent.title,
+                    formattedDate,
+                    calendarEvent.location || 'Location TBD'
+                  )}
+                  disabled={sendingEmail}
+                >
+                  {sendingEmail ? 'Signing Up...' : 'Sign Up'}
+                </Button.Primary>
+              </div>
             </div>
-            <div style={eventTitle}>
-              <div><img style={imgStyle} src={Clock} alt="" /></div>
-              <div>{monthVector[calendarEvent.start.month - 1] + " " + calendarEvent.start.toString()[8] + calendarEvent.start.toString()[9] + ", " + calendarEvent.start.toString()[0] + calendarEvent.start.toString()[1] + calendarEvent.start.toString()[2] + calendarEvent.start.toString()[3]}</div>
-            </div>
-            <div style={desStyle}>{calendarEvent.description}</div>
-            <div style={desStyle}>
-              <Button.Primary 
-                onClick={() => sendSignUpEmail(calendarEvent.title)}
-                disabled={sendingEmail}
-              >
-                {sendingEmail ? 'Signing Up...' : 'Sign Up'}
-              </Button.Primary>
-            </div>
-          </div>
-        );
+          );
+        } catch (error) {
+          console.error('Error rendering event modal:', error);
+          return <div>Error loading event details</div>;
+        }
       },
     }
 
