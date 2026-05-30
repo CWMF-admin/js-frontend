@@ -1,10 +1,12 @@
-import Paperclip from '../../../assets/images/Paperclip.svg';
 import { useEffect, useState } from 'react';
-
 import { auth } from '@/firebase-config';
-
+import {     acknowledgementTemplate, 
+    thankyouTemplate, 
+    invitationTemplate
+ } from '../emails/templates.js';
 
 const AcknowForm = () => {
+    // ... (all your existing styles remain the same)
 
     const sendStyle =
     {
@@ -27,17 +29,6 @@ const AcknowForm = () => {
     const imgStyle =
     {
         width: '16px',
-    }
-
-    const hStyle =
-    {
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#ffffff',
-        marginTop: '10px',
-        width: '90%',
-        height: '20%',
-        borderRadius: '5px'
     }
 
     const dropStyle =
@@ -70,6 +61,15 @@ const AcknowForm = () => {
     const [selectedVolunteer, setSelectedVolunteer] = useState('');
     const [emailBody, setEmailBody] = useState('');
     const [sending, setSending] = useState(false);
+    const [templateDropdown, setTemplateDropdown] = useState('');
+    
+    // State for template variables
+    const [templateVars, setTemplateVars] = useState({
+        volunteerName: '',
+        eventName: '',
+        eventDate: '',
+        eventLocation: '',
+    });
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -102,58 +102,120 @@ const AcknowForm = () => {
         fetchUsers();
     }, []);
 
+    const handleTemplateSelect = (e) => {
+        const selectedTemplate = e.target.value;
+        setTemplateDropdown(selectedTemplate);
+        
+        // Get the selected volunteer's name
+        const volunteer = users.find(u => u.email === selectedVolunteer);
+        if (volunteer) {
+            setTemplateVars(prev => ({
+                ...prev,
+                volunteerName: `${volunteer.firstname}`
+            }));
+        }
+
+        const organizationName = '';
+
+        // Generate the email body based on selected template
+        if (selectedTemplate === 'acknowledgement') {
+            setEmailBody(acknowledgementTemplate(
+                templateVars.volunteerName || 'Valued Volunteer',
+                organizationName
+            ));
+            setEmailSubject('Acknowledgement Letter');
+        } else if (selectedTemplate === 'thankyou') {
+            setEmailBody(thankyouTemplate(
+                templateVars.volunteerName || 'Valued Volunteer',
+                templateVars.eventName || 'Your Service'
+            ));
+            setEmailSubject('Thank You');
+        } else if (selectedTemplate === 'invitation') {
+            setEmailBody(invitationTemplate(
+                templateVars.volunteerName || 'Valued Volunteer',
+                templateVars.eventName || 'Our Event',
+                templateVars.eventDate || 'TBD',
+                templateVars.eventLocation || 'TBD'
+            ));
+            setEmailSubject('You\'re Invited!');
+        }
+    };
+
+    const handleVolunteerChange = (e) => {
+        const volunteerId = e.target.value;
+        setSelectedVolunteer(volunteerId);
+        
+        // Update volunteer name in template vars
+        const volunteer = users.find(u => u.email === volunteerId);
+        if (volunteer) {
+            setTemplateVars(prev => ({
+                ...prev,
+                volunteerName: `${volunteer.firstname}`
+            }));
+        }
+    };
+
+    const handleTemplateVarChange = (e) => {
+        const { name, value } = e.target;
+        setTemplateVars(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
     const sendEmail = async (e) => {
-  e.preventDefault();
+        e.preventDefault();
 
-    if (!emailSubject) {
-    alert('Please enter a subject line');
-    return;
-  }
+        if (!emailSubject) {
+            alert('Please enter a subject line');
+            return;
+        }
 
-  if (!selectedVolunteer) {
-    alert('Please select a volunteer');
-    return;
-  }
+        if (!selectedVolunteer) {
+            alert('Please select a volunteer');
+            return;
+        }
 
-  if (!emailBody.trim()) {
-    alert('Please enter the email body');
-    return;
-  }
+        if (!emailBody.trim()) {
+            alert('Please enter the email body');
+            return;
+        }
 
-  setSending(true);
+        setSending(true);
 
-  try {
-    const token = await auth.currentUser?.getIdToken();
-    
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/email/sendEmail`, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        to: selectedVolunteer,
-        subject: emailSubject,
-        html: emailBody,
-      }),
-    });
+        try {
+            const token = await auth.currentUser?.getIdToken();
+            
+            const formData = new FormData();
+            formData.append('to', selectedVolunteer);
+            formData.append('subject', emailSubject);
+            formData.append('html', emailBody);
 
-    const data = await response.json();
-    if (response.ok) {
-      alert('Email sent successfully!');
-      setEmailSubject('');
-      setEmailBody('');
-      setSelectedVolunteer('');
-    } else {
-      alert('Error: ' + (data.error || 'Failed to send email'));
-    }
-  } catch (error) {
-    console.error('Error sending email:', error);
-    alert('Error sending email: ' + error.message);
-  } finally {
-    setSending(false);
-  }
-};
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/email/sendEmail`, {
+                method: 'POST',
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert('Email sent successfully!');
+                setEmailSubject('');
+                setEmailBody('');
+                setSelectedVolunteer('');
+                setTemplateDropdown('');
+            } else {
+                alert('Error: ' + (data.error || 'Failed to send email'));
+            }
+        } catch (error) {
+            console.error('Error sending email:', error);
+            alert('Error sending email: ' + error.message);
+        } finally {
+            setSending(false);
+        }
+    };
 
     if (loading) {
         return <div>Loading users...</div>;
@@ -164,10 +226,10 @@ const AcknowForm = () => {
     }
 
     return (
-        <div class="container">
+        <div className="container">
             <form onSubmit={sendEmail}>
                 <div>                    
-                    <label htmlFor="volunteers" >
+                    <label htmlFor="volunteers">
                         <strong>Select Volunteer:</strong>
                     </label>
                     <select
@@ -175,7 +237,7 @@ const AcknowForm = () => {
                         name="volunteers"
                         id="volunteers"
                         value={selectedVolunteer}
-                        onChange={(e) => setSelectedVolunteer(e.target.value)}
+                        onChange={handleVolunteerChange}
                     >
                         <option value="">Select Volunteer</option>
                         {users.map((user) => (
@@ -183,25 +245,85 @@ const AcknowForm = () => {
                         ))}
                     </select>
                 </div>
+
+                <div>
+                    <label htmlFor="template"><strong>Email Template:</strong></label>
+                    <select
+                        style={dropStyle}
+                        name="template"
+                        id="template"
+                        value={templateDropdown}
+                        onChange={handleTemplateSelect}
+                    >
+                        <option value="">-- Select a template --</option>
+                        <option value="acknowledgement">Acknowledgement Letter</option>
+                        <option value="thankyou">Thank You</option>
+                        <option value="invitation">Invitation</option>
+                    </select>
+                </div>
+
+                {/* Template Variables Form */}
+                {templateDropdown && (
+                    <div style={{border: '1px solid #ddd', padding: '10px', marginTop: '10px', borderRadius: '5px'}}>
+                        <strong>Customize Template:</strong>
+                    
+                        {(templateDropdown === 'thankyou' || templateDropdown === 'invitation') && (
+                            <div>
+                                <label>Event Name:</label>
+                                <input 
+                                    type="text"
+                                    name="eventName"
+                                    value={templateVars.eventName}
+                                    onChange={handleTemplateVarChange}
+                                    style={{width: '100%', padding: '5px', marginTop: '5px'}}
+                                />
+                            </div>
+                        )}
+                        {templateDropdown === 'invitation' && (
+                            <>
+                                <div>
+                                    <label>Event Date:</label>
+                                    <input 
+                                        type="text"
+                                        name="eventDate"
+                                        value={templateVars.eventDate}
+                                        onChange={handleTemplateVarChange}
+                                        style={{width: '100%', padding: '5px', marginTop: '5px'}}
+                                    />
+                                </div>
+                                <div>
+                                    <label>Event Location:</label>
+                                    <input 
+                                        type="text"
+                                        name="eventLocation"
+                                        value={templateVars.eventLocation}
+                                        onChange={handleTemplateVarChange}
+                                        style={{width: '100%', padding: '5px', marginTop: '5px'}}
+                                    />
+                                </div>
+                            </>
+                        )}
+                    </div>
+                )}
+
                 <div style={sbjContainer}>
-                    <label for="subject"><strong>Subject:</strong></label>
+                    <label htmlFor="subject"><strong>Subject:</strong></label>
                     <textarea style={lblStyle}
+                            id="subject"
                             value={emailSubject}
                             onChange={(e) => setEmailSubject(e.target.value)}
                     >    
                     </textarea>
                 </div>
                 <textarea
-                    id="subject"
-                    name="subject"
-                    class="body"
-                    placeholder="Write something.."
-                    value={emailBody}
-                    onChange={(e) => setEmailBody(e.target.value)}
-                />
+    id="body"
+    name="body"
+    className="body"
+    placeholder="Write something.."
+    value={emailBody}
+    onChange={(e) => setEmailBody(e.target.value)}
+/>
                 <div style={buttonCont}>
-                    <span style={sendStyle}><input type="submit" value="+" />
-                        <input type='image' style={imgStyle} src={Paperclip} alt=""></input></span>
                     <span style={utilStyle}>
                         <input
                             type="submit"
