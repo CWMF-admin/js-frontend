@@ -3,17 +3,18 @@ import {
   createViewMonthAgenda,
   createViewMonthGrid,
   createViewWeek,
-} from '@schedule-x/calendar'
-import { createEventsServicePlugin } from '@schedule-x/events-service'
+} from '@schedule-x/calendar';
+import { createEventsServicePlugin } from '@schedule-x/events-service';
 import 'temporal-polyfill/global'
-import '@schedule-x/theme-default/dist/index.css'
+import '@schedule-x/theme-default/dist/index.css';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { createEventModalPlugin } from '@schedule-x/event-modal'
 import Calendar from '../../../assets/images/Calendar.svg';
 import Clock from '../../../assets/images/Clock.svg';
-import { Button } from '../atoms/Button'
+import { Button } from '../atoms/Button';
 import { auth } from '@/firebase-config';
+import { confirmationTemplate } from '../emails/templates';
  
 function WeekCal() { 
     const eventsService = useState(() => createEventsServicePlugin())[0]
@@ -69,34 +70,16 @@ function WeekCal() {
       try {
         const token = await auth.currentUser?.getIdToken();
         
-        // Fetch signup confirmation template
-        const templatesResponse = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/templates?name=signup`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+        // Use the signup template from templates.js
+        const emailContent = confirmationTemplate(
+          currentUser.displayName || currentUser.email,
+          eventTitle
         );
-
-        if (!templatesResponse.ok) {
-          throw new Error('Failed to fetch signup template');
-        }
-
-        const templates = await templatesResponse.json();
-        const signupTemplate = templates.find(t => t.name.toLowerCase().includes('signup'));
-
-        if (!signupTemplate) {
-          throw new Error('Signup confirmation template not found');
-        }
-
-        // Replace placeholders with event info
-        let emailContent = signupTemplate.content;
-        emailContent = emailContent.replace(/\{volunteerName\}/g, currentUser.displayName || currentUser.email);
-        emailContent = emailContent.replace(/\{eventName\}/g, eventTitle);
 
         // Send email
         const formData = new FormData();
         formData.append('to', currentUser.email);
-        formData.append('subject', signupTemplate.subject);
+        formData.append('subject', 'Event Signup Confirmation');
         formData.append('html', emailContent);
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/email/sendEmail`, {
