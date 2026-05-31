@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { auth } from '@/firebase-config';
-import {     acknowledgementTemplate, 
-    thankyouTemplate, 
+import {
+    acknowledgementTemplate,
+    thankyouTemplate,
     invitationTemplate
- } from '../emails/templates.js';
+} from '../emails/templates.js';
 
 const AcknowForm = () => {
 
@@ -13,6 +14,7 @@ const AcknowForm = () => {
         justifyContent: 'left',
         alignItems: 'center',
     };
+
     const buttonCont =
     {
         display: 'flex',
@@ -33,13 +35,35 @@ const AcknowForm = () => {
         borderRadius: '5px',
         marginTop: '4px',
         marginBottom: '3px',
+        fontSize: '15px'
     }
 
-    const sbjContainer=
+    const sbjContainer =
     {
         display: 'grid',
-        gridTemplateColumns: '0.5fr 3fr',
+        gridTemplateColumns: '0.4fr 6fr',
         alignItems: 'center',
+        marginTop: '5px',
+        marginBottom: '5px',
+    }
+
+    const tempStyle =
+    {
+        width: '97%',
+        padding: '5px',
+        marginTop: '5px',
+        marginBottom: '10px',
+        fontSize: '15px',
+    }
+
+    const tempContainer =
+    {
+        border: '1px solid #ddd',
+        padding: '10px',
+        marginTop: '10px',
+        marginBottom: '10px',
+        borderRadius: '5px',
+        fontSize: '15px',
     }
 
     const [users, setUsers] = useState([]);
@@ -50,7 +74,7 @@ const AcknowForm = () => {
     const [emailBody, setEmailBody] = useState('');
     const [sending, setSending] = useState(false);
     const [templateDropdown, setTemplateDropdown] = useState('');
-    
+
     const [templateVars, setTemplateVars] = useState({
         volunteerName: '',
         eventName: '',
@@ -92,7 +116,7 @@ const AcknowForm = () => {
     const handleTemplateSelect = (e) => {
         const selectedTemplate = e.target.value;
         setTemplateDropdown(selectedTemplate);
-        
+
         const volunteer = users.find(u => u.email === selectedVolunteer);
         if (volunteer) {
             setTemplateVars(prev => ({
@@ -105,19 +129,19 @@ const AcknowForm = () => {
 
         if (selectedTemplate === 'acknowledgement') {
             setEmailBody(acknowledgementTemplate(
-                templateVars.volunteerName || 'Valued Volunteer',
+                templateVars.volunteerName || 'Volunteer',
                 organizationName
             ));
             setEmailSubject('Acknowledgement Letter');
         } else if (selectedTemplate === 'thankyou') {
             setEmailBody(thankyouTemplate(
-                templateVars.volunteerName || 'Valued Volunteer',
-                templateVars.eventName || 'Your Service'
+                templateVars.volunteerName || 'Volunteer',
+                templateVars.eventName || 'Event Name'
             ));
             setEmailSubject('Thank You');
         } else if (selectedTemplate === 'invitation') {
             setEmailBody(invitationTemplate(
-                templateVars.volunteerName || 'Valued Volunteer',
+                templateVars.volunteerName || 'Volunteer',
                 templateVars.eventName || 'Our Event',
                 templateVars.eventDate || 'TBD',
                 templateVars.eventLocation || 'TBD'
@@ -129,7 +153,7 @@ const AcknowForm = () => {
     const handleVolunteerChange = (e) => {
         const volunteerId = e.target.value;
         setSelectedVolunteer(volunteerId);
-        
+
         const volunteer = users.find(u => u.email === volunteerId);
         if (volunteer) {
             setTemplateVars(prev => ({
@@ -204,8 +228,8 @@ const AcknowForm = () => {
     return (
         <div className="container">
             <form onSubmit={sendEmail}>
-                <div>                    
-                    <label htmlFor="volunteers">
+                <div>
+                    <label htmlFor="volunteers" style={lblStyle}>
                         <strong>Select Volunteer:</strong>
                     </label>
                     <select
@@ -223,7 +247,7 @@ const AcknowForm = () => {
                 </div>
 
                 <div>
-                    <label htmlFor="template"><strong>Email Template:</strong></label>
+                    <label htmlFor="template" style={lblStyle}><strong>Email Template:</strong></label>
                     <select
                         style={dropStyle}
                         name="template"
@@ -238,43 +262,42 @@ const AcknowForm = () => {
                     </select>
                 </div>
 
-                {/* Template Variables Form */}
                 {templateDropdown && (
-                    <div style={{border: '1px solid #ddd', padding: '10px', marginTop: '10px', borderRadius: '5px'}}>
+                    <div style={tempContainer}>
                         <strong>Customize Template:</strong>
-                    
+
                         {(templateDropdown === 'thankyou' || templateDropdown === 'invitation') && (
                             <div>
-                                <label>Event Name:</label>
-                                <input 
+                                <label style={lblStyle}>Event Name:</label>
+                                <input
                                     type="text"
                                     name="eventName"
                                     value={templateVars.eventName}
                                     onChange={handleTemplateVarChange}
-                                    style={{width: '100%', padding: '5px', marginTop: '5px'}}
+                                    style={tempStyle}
                                 />
                             </div>
                         )}
                         {templateDropdown === 'invitation' && (
                             <>
                                 <div>
-                                    <label>Event Date:</label>
-                                    <input 
+                                    <label style={lblStyle}>Event Date:</label>
+                                    <input
                                         type="text"
                                         name="eventDate"
                                         value={templateVars.eventDate}
                                         onChange={handleTemplateVarChange}
-                                        style={{width: '100%', padding: '5px', marginTop: '5px'}}
+                                        style={tempStyle}
                                     />
                                 </div>
                                 <div>
-                                    <label>Event Location:</label>
-                                    <input 
+                                    <label style={lblStyle}>Event Location:</label>
+                                    <input
                                         type="text"
                                         name="eventLocation"
                                         value={templateVars.eventLocation}
                                         onChange={handleTemplateVarChange}
-                                        style={{width: '100%', padding: '5px', marginTop: '5px'}}
+                                        style={tempStyle}
                                     />
                                 </div>
                             </>
@@ -283,22 +306,22 @@ const AcknowForm = () => {
                 )}
 
                 <div style={sbjContainer}>
-                    <label htmlFor="subject"><strong>Subject:</strong></label>
+                    <label htmlFor="subject" style={lblStyle}><strong>Subject:</strong></label>
                     <textarea style={lblStyle}
-                            id="subject"
-                            value={emailSubject}
-                            onChange={(e) => setEmailSubject(e.target.value)}
-                    >    
+                        id="subject"
+                        value={emailSubject}
+                        onChange={(e) => setEmailSubject(e.target.value)}
+                    >
                     </textarea>
                 </div>
                 <textarea
-    id="body"
-    name="body"
-    className="body"
-    placeholder="Write something.."
-    value={emailBody}
-    onChange={(e) => setEmailBody(e.target.value)}
-/>
+                    id="body"
+                    name="body"
+                    className="body"
+                    placeholder="Write something.."
+                    value={emailBody}
+                    onChange={(e) => setEmailBody(e.target.value)}
+                />
                 <div style={buttonCont}>
                     <span style={utilStyle}>
                         <input
