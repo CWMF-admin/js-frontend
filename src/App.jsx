@@ -32,6 +32,7 @@ export default function App() {
               <Route path='admin-dashboard' element={<AdminDashBoard />} />
               <Route path='admin-events' element={<AdminEvents />} />
             </Route>
+              <Route path='volunteer-dashboard' element={<VolunteerDash />} />
           </Route>
           <Route path='/' element={<NavLayout_login />}>
             <Route path='admin-acknowledgements' element={<Acknowledgements/>}/>

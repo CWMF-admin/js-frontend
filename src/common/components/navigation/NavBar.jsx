@@ -24,6 +24,7 @@ const StyledNav = styled.nav`
   position: fixed;
   left: 0;
   top: 0;
+  z-index: 1000;
  width: ${({ toggle }) => (toggle ? '20%' : '5%')};
   transition: width 0.25s ease;
   height: 100vh;
@@ -181,6 +182,9 @@ useEffect(() => {
   margin-bottom: 20px;
     @media (max-width: 768px) {
   display: none;
+  ::hover {
+    cursor: pointer;
+  }
 }`;
   const LogIconStyle = styled.img`
   margin-bottom: 20px;
@@ -188,6 +192,11 @@ useEffect(() => {
       display: none;
     }
   `;
+  const LogTopNavStyle = styled(Button.Secondary)`
+  margin-bottom: 20px;
+  ::hover {
+    cursor: pointer;
+  }  `;
 
   
 
@@ -200,7 +209,7 @@ useEffect(() => {
               <StyleLogo toggle={toggle} src={CWMF_big_logo} alt='CWMF Logo'/>
             ) : <img src={CWMF_small_logo} alt='CWMF Logo' style={styleSmallLogo}></img>}
           </LogoPlaceholder>
-          <StyleButtonHam toggle={toggle} onClick={windowWidth ? handleNavToggle : handleDropdown}>
+          <StyleButtonHam toggle={toggle} windowWidth={windowWidth} onClick={windowWidth ? handleNavToggle : handleDropdown}>
             {windowWidth ?  ( toggle ? <ArrowStyle>&lt;</ArrowStyle> : <ArrowStyle> &gt;</ArrowStyle> ) : <img src={Hamburger} alt='Hamburger Menu' style={styleHamburger} />}
             
             
@@ -222,6 +231,9 @@ useEffect(() => {
           toggle={toggle}
           onClick={() => navigate('/admin-acknowledgements')}
         />
+        {!windowWidth ?         <LogTopNavStyle onClick={handleLogoutClick} toggle={toggle}>Log Out</LogTopNavStyle>
+ : null}
+        
         </>)}
       </TopAligned>
       
@@ -230,6 +242,7 @@ useEffect(() => {
           src={profileIcon}
           alt='Profile Icon'
           style={{ width: '30px', height: '30px' }}
+          onClick={handleLogoutClick}
         />
       ) : user ? (
         <LogoutStyle onClick={handleLogoutClick}>Log Out</LogoutStyle>
